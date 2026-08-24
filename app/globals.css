@@ -1,26 +1,257 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:is(.dark *));
+
+/* ============================================================
+   CONTEXT DESIGN SYSTEM
+   A dark stage. Solid panels float on it. Glass only over media.
+   ============================================================ */
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+  --font-heading: var(--font-sans);
+
+  /* stage surfaces */
+  --color-ground: var(--ground);
+  --color-panel: var(--panel);
+  --color-raised: var(--raised);
+  --color-well: var(--well);
+
+  /* the two accents: signal = you, synth = the model */
+  --color-signal: var(--signal);
+  --color-signal-foreground: var(--signal-foreground);
+  --color-synth: var(--synth);
+  --color-synth-foreground: var(--synth-foreground);
+
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+
+  --shadow-panel: var(--elevation-panel);
+  --shadow-glass: var(--elevation-glass);
+
+  --ease-glass: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* ------------------------------------------------------------
+   Tokens. Dark is the only mode — this is a media tool, the
+   stage stays dark so footage carries the color.
+   ------------------------------------------------------------ */
+:root {
+  color-scheme: dark;
+
+  /* Stage: four steps of depth, no more. */
+  --ground: oklch(0.145 0.006 265);   /* the stage itself, showing through gaps */
+  --panel: oklch(0.215 0.006 265);    /* floating regions */
+  --raised: oklch(0.262 0.007 265);   /* controls resting on a panel */
+  --well:   oklch(0.178 0.006 265);   /* inset: inputs, tracks, scrub area */
+
+  --background: var(--ground);
+  --foreground: oklch(0.97 0.002 265);
+
+  --card: var(--panel);
+  --card-foreground: var(--foreground);
+  --popover: var(--raised);
+  --popover-foreground: var(--foreground);
+
+  --muted: var(--raised);
+  --muted-foreground: oklch(0.677 0.013 265);
+  --secondary: var(--raised);
+  --secondary-foreground: var(--foreground);
+  --accent: var(--raised);
+  --accent-foreground: var(--foreground);
+
+  /* Signal — cyan. Anything the operator commits: export, play, confirm. */
+  --signal: oklch(0.808 0.114 219);
+  --signal-foreground: oklch(0.19 0.03 240);
+  /* Synth — violet. Anything the model authored or is about to: prompt,
+     generate, AI suggestion. Never mix the two on one control. */
+  --synth: oklch(0.723 0.158 295);
+  --synth-foreground: oklch(0.985 0.002 265);
+
+  --primary: var(--signal);
+  --primary-foreground: var(--signal-foreground);
+
+  --destructive: oklch(0.68 0.19 22);
+
+  --border: oklch(1 0 0 / 8%);
+  --input: oklch(1 0 0 / 10%);
+  --ring: var(--signal);
+
+  --chart-1: var(--signal);
+  --chart-2: var(--synth);
+  --chart-3: oklch(0.78 0.13 165);
+  --chart-4: oklch(0.80 0.13 85);
+  --chart-5: oklch(0.72 0.15 350);
+
+  --radius: 0.875rem;
+
+  --sidebar: var(--ground);
+  --sidebar-foreground: oklch(0.78 0.008 265);
+  --sidebar-primary: var(--signal);
+  --sidebar-primary-foreground: var(--signal-foreground);
+  --sidebar-accent: var(--panel);
+  --sidebar-accent-foreground: var(--foreground);
+  --sidebar-border: transparent;
+  --sidebar-ring: var(--signal);
+
+  /* ---- Glass material ----
+     Tint is what the pane is made of; specular is the lit top edge that
+     sells it as a physical object; edge is the rim light around it. */
+  --glass-tint: oklch(1 0 0 / 10%);
+  --glass-tint-strong: oklch(0.30 0.006 265 / 62%);
+  --glass-edge: oklch(1 0 0 / 14%);
+  --glass-specular: oklch(1 0 0 / 30%);
+  --glass-blur: 20px;
+  --glass-blur-strong: 40px;
+
+  --elevation-panel: 0 1px 2px oklch(0 0 0 / 40%);
+  --elevation-glass: 0 2px 8px oklch(0 0 0 / 24%), 0 12px 32px oklch(0 0 0 / 28%);
+}
+
+/* Present so shadcn's `dark:` variants still resolve. Palette lives on :root. */
+.dark {
+  color-scheme: dark;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground font-sans;
+    -webkit-font-smoothing: antialiased;
+  }
+  /* Timecodes, durations, resolutions — they must not jitter while playing. */
+  [data-numeric] {
+    font-variant-numeric: tabular-nums;
+    font-family: var(--font-mono);
+    letter-spacing: -0.01em;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ============================================================
+   MATERIALS
+   ============================================================ */
+
+/* A region floating on the stage. The gap around it is the divider —
+   panels do not need borders between them. */
+@utility panel {
+  background-color: var(--panel);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--elevation-panel);
+}
+
+/* Recessed into a panel: text inputs, timeline tracks, scrub areas. */
+@utility well {
+  background-color: var(--well);
+  border-radius: var(--radius-lg);
+  box-shadow: inset 0 1px 2px oklch(0 0 0 / 30%);
+}
+
+/* THE material. Only over media — video, image, a generated frame.
+   Over the stage it has nothing to refract and reads as dirty plastic. */
+@utility glass {
+  background-color: var(--glass-tint);
+  backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  border: 1px solid var(--glass-edge);
+  box-shadow:
+    var(--elevation-glass),
+    inset 0 1px 0 0 var(--glass-specular);
+  color: oklch(0.99 0 0);
+}
+
+/* For glass that has to carry body copy — a prompt, a panel of settings.
+   More tint, more blur, so text stays readable over busy footage. */
+@utility glass-strong {
+  background-color: var(--glass-tint-strong);
+  backdrop-filter: blur(var(--glass-blur-strong)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--glass-blur-strong)) saturate(180%);
+  border: 1px solid var(--glass-edge);
+  box-shadow:
+    var(--elevation-glass),
+    inset 0 1px 0 0 var(--glass-specular);
+  color: oklch(0.99 0 0);
+}
+
+/* The edge of glass without the pane. For media that has to stay sharp — a
+   filmstrip frame, a thumbnail — where the tint and blur of `glass` would fog
+   the very thing being looked at. Same border and specular, nothing else. */
+@utility glass-rim {
+  border: 1px solid var(--glass-edge);
+  box-shadow:
+    var(--elevation-glass),
+    inset 0 1px 0 0 var(--glass-specular);
+}
+
+/* Glass that responds to the pointer. */
+@utility glass-interactive {
+  transition:
+    background-color 150ms var(--ease-glass),
+    transform 150ms var(--ease-glass);
+  &:hover {
+    background-color: oklch(1 0 0 / 18%);
+  }
+  &:active {
+    transform: translateY(0.5px) scale(0.97);
+  }
+}
+
+/* Ambient wash behind the whole app — the blurred spill of the media
+   being edited. Decorative; never place text directly on it. */
+@utility stage-ambient {
+  background-color: var(--ground);
+  background-image:
+    radial-gradient(70% 55% at 18% 0%, oklch(0.723 0.158 295 / 16%), transparent 70%),
+    radial-gradient(60% 50% at 88% 12%, oklch(0.808 0.114 219 / 13%), transparent 70%),
+    radial-gradient(80% 60% at 50% 108%, oklch(0.72 0.15 350 / 10%), transparent 70%);
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .glass,
+  .glass-strong {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background-color: oklch(0.24 0.006 265 / 96%);
+  }
 }
