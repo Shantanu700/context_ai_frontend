@@ -1,7 +1,7 @@
 import { client } from "@/src/client/client.gen";
 
 export const API_URL =
-  process.env.NEXT_PUBLIC_API_URL ?? "https://10.21.128.92:8022";
+  process.env.NEXT_PUBLIC_API_URL ?? "https://localhost:8022";
 
 /**
  * Configures the generated client. Kept out of `src/client/**` so that
